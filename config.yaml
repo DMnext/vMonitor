@@ -1,0 +1,16 @@
+time: 1  # Time
+email: "example@email.com"  # Your email
+
+save_cache: false  # Save cache on your device
+send_discord: true  # Send to Discord, Email, Terminal or Notification
+send_email: false  # Send to Discord, Email, Terminal or Notification
+send_terminal: true  # Send to Discord, Email, Terminal or Notification
+send_notification: true  # Send to Discord, Email, Terminal or Notification
+
+send_log_terminal: false  # Send log to Discord, Email or Terminal
+save_log_cache: false  # Send log to Discord, Email or Terminal
+send_log_email: false  # Send log to Discord, Email or Terminal
+send_log_discord: false  # Send log to Discord, Email or Terminal
+
+pretty: true  # Make Terminal pretty
+err: false  # err
