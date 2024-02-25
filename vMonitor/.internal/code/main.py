@@ -6,6 +6,9 @@ from html_utils import write_html, find_html, parse_html
 from pretty import pretty_syntax
 from reader import read_yaml_config_value
 
+from notify import *
+from monitor_html import *
+
 
 def change(send_terminal, _send_discord, _send_email, _send_notification, email):
     msg = "Verschenktmarkt changed!"
@@ -50,7 +53,7 @@ def communicate_with_internet(url,
                               email):
     if parse_html(
             find_html(url)) != html_elements and html_elements is not None and html_number != 0 and html_number != len(
-        parse_html(find_html(url))):
+                parse_html(find_html(url))):
         change(send_terminal, _send_discord, _send_email, _send_notification, email)
 
     html = find_html(url)

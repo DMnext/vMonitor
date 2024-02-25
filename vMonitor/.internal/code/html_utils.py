@@ -6,10 +6,11 @@ from bs4 import BeautifulSoup
 
 
 def write_html(html) -> str:
+    # TODO: fix bugs
     html_random = random.randint(0, 1000)
     html_time = time.strftime("%y.%m.%d_%H:%M:%S")
-    path = f"VMonitor/.cache/html/html-{html_time}-{html_random}"
-    path2 = "VMonitor/.cache/html/html/"
+    path = f"vMonitor/.cache/html/html-{html_time}-{html_random}"
+    path2 = "vMonitor/.cache/html/html/"
     fh = None
     while True:
         try:
@@ -83,6 +84,42 @@ def parse_html(html_code):
     for item in listing_card_list_items:
         list_of_items.append(item.text)
     return list_of_items
+
+
+def get_html_parametrs(html_content):
+    # from bs4 import BeautifulSoup
+    #
+    # # Sample HTML content
+    # html_content = """
+    # <html>
+    # <body>
+    # <img class="example" src="image1.jpg" title="Image 1">
+    # <img class="example" src="image2.jpg" title="Image 2">
+    # <img class="example" src="image3.jpg" title="Image 3">
+    # </body>
+    # </html>
+    # """
+
+    src = None
+    title = None
+
+    # Parse the HTML content
+    soup = BeautifulSoup(html_content, 'html.parser')
+
+    # Find all <img> elements with class="example"
+    img_elements = soup.find_all('img', class_='example')
+
+    # Extract src and title attributes
+    for img in img_elements:
+        src = img['src']
+        title = img['title']
+        # print("SRC:", src)
+        # print("Title:", title)
+
+    assert scr is not None
+    assert title is not None
+
+    return src, title
 
 
 if __name__ == '__main__':
