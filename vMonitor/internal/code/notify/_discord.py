@@ -45,10 +45,6 @@ def send(message: str):
     run(msg=message)
 
 
-if __name__ == '__main__':
-    from main import main
-    main()
-
 
 """
 import discord

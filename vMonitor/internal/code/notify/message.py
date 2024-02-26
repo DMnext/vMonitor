@@ -5,7 +5,7 @@ def send_email(message, me, you):
 
 
 def send_discord(message):
-    from _discord import send
+    from notify._discord import send
     send(message)
 
 

@@ -13,8 +13,3 @@ def errorhandle(err, errormessage):
     console.print_exception(extra_lines=5)
     print(errormessage)
     exit(1)
-
-
-if __name__ == '__main__':
-    from main import main
-    main()

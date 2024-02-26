@@ -107,7 +107,7 @@ def get_html_parametrs(html_content):
     soup = BeautifulSoup(html_content, 'html.parser')
 
     # Find all <img> elements with class="example"
-    img_elements = soup.find_all('img', class_='example')
+    img_elements = soup.find_all('img')
 
     # Extract src and title attributes
     for img in img_elements:
@@ -121,7 +121,3 @@ def get_html_parametrs(html_content):
 
     return src, title
 
-
-if __name__ == '__main__':
-    from main import main
-    main()

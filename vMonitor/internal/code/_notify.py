@@ -1,15 +1,9 @@
-import time
-
-from settings import conf
-from message import send_email, send_discord, send_notification
-from html_utils import write_html, find_html, parse_html
-from pretty import pretty_syntax
-from reader import read_yaml_config_value
+from notify.message import send_email, send_discord, send_notification
+from monitor_html.html_utils import write_html
+from notify.pretty import pretty_syntax
 
 
-def change(send_terminal, _send_discord, _send_email, _send_notification, email):
-    msg = "Verschenktmarkt changed!"
-
+def _notify(msg, send_terminal, _send_discord, _send_email, _send_notification, email):
     if send_terminal:
         print(msg)
 
@@ -23,7 +17,7 @@ def change(send_terminal, _send_discord, _send_email, _send_notification, email)
         send_notification(msg)
 
 
-def _(save_log_cache, html, send_log_terminal, send_log_email, pretty_print, email):
+def _b(save_log_cache, html, send_log_terminal, send_log_email, pretty_print, email):
     if save_log_cache:
         path = write_html(html)
 
