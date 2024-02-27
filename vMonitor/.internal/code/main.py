@@ -5,19 +5,39 @@ from reader import read_yaml_config_value
 
 from stop_all_proseses import *
 
-from _notify import _notify, _b
+from comparer import compare
+
+from _notify import _notify
 from _monitor_html import *
 from _os import load_config
 
 url = "https://www.verschenkmarkt-stuttgart.de/"
 
 
-def html_monitor(old_elements, html_elements, html_number):
-    html, html_elements, html_number = communicate_with_internet(url=url,
-                                                                 html_elements=html_elements,
-                                                                 html_number=html_number)
-    get_element_html9(elements=parse_html(find_html(url=url)), old_elements=old_elements)
-    return html, html_elements, html_number
+def html_monitor(old_elements):
+
+    new_changes = 0
+
+    changed = False
+
+    msg = None
+    link = None
+
+    elements = parse_html(find_html(url=url))
+
+    for u, r in zip(elements, old_elements):
+        if compare((u, r)):
+            pass
+
+        else:
+            if not investigate(element=u, old_element=r):
+                new_changes += 1
+                link, msg = parse_element(u)
+                changed = True
+
+    if msg is not None and link is not None:
+
+        return link, msg, new_changes, changed
 
 
 def fast_notify(save_log_cache, send_log_terminal, send_log_email, pretty_print, email, html):
@@ -60,6 +80,11 @@ def main():
     #     _console = pretty_spinner()
 
     # URL of the webpage from which to fetch the HTML
+
+    html = find_html(url)
+    html_elements = parse_html(html)
+    html_number = len(html_elements)
+
 
     html_elements = []
     html_number = 0

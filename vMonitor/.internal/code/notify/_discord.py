@@ -1,11 +1,17 @@
 import discord
-import asyncio
+from discord.ext import commands
+
+from stop_all_proseses import stop as end_proses
+# import asyncio
 
 # Your Discord bot token (replace 'YOUR_TOKEN' with your actual token)
 TOKEN = 'MTIwOTg0MjYyMjg4NjE4NzA0OA.GcIR4r._cKb7ZsK5ijN-R_qVed0MaWnUZBL6DPIjMfshg'
 
+message_content = "vmonitor.error : NoMessageGivenError"
+
 # Channel ID where you want to send the message
 CHANNEL_ID = 1209851503616073749
+_CHANNEL_ID = 1212024170016415744
 
 # https://discord.gg/PTGXN7Cscy
 
@@ -15,7 +21,17 @@ intents = discord.Intents.default()
 # Create a Discord client
 client = discord.Client(intents=intents)
 
-message_content = ""
+
+# Create a bot instance
+bot = commands.Bot(command_prefix='!', intents=intents)
+
+
+# Command to stop the bot
+@bot.command()
+async def stop():
+    send("Stopping bot...")
+    await bot.close()
+    end_proses()
 
 
 @client.event
@@ -31,19 +47,28 @@ async def on_ready():
     # print('Message sent:', message_content)
 
 
-def run(msg):
+def run():
     # Message content
     # Run the bot
     client.run(TOKEN)
     return True
 
 
-def send(message: str):
+def send(message: str, only_log: bool = False):
     global message_content
+    global _CHANNEL_ID
+    global CHANNEL_ID
+
     message_content = message
 
-    run(msg=message)
+    if only_log:
+        CHANNEL_ID = _CHANNEL_ID
 
+    else:
+        CHANNEL_ID = _CHANNEL_ID
+        run()
+
+    run()
 
 
 """

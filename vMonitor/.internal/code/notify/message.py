@@ -1,9 +1,3 @@
-def send_email(message, me, you):
-    from _email import _send_email
-
-    _send_email(message, me, you)
-
-
 def send_discord(message):
     from notify._discord import send
     send(message)
