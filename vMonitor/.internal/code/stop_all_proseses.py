@@ -1,8 +1,4 @@
-from notify_system import _communicate
-
-
-def stop(msg, code):
-    _communicate(msg=msg)
+def stop(code):
     exit(code)
 
 

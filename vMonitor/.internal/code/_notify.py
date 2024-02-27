@@ -7,6 +7,7 @@ def send_terminal(message):
 
 def _error_notify(msg):
     error_msg = f"[ERROR] {msg}"
+    return error_msg
 
 
 def _warning_notify(msg):
@@ -19,9 +20,17 @@ def _info_notify(msg):
     return info_msg
 
 
-def _notify(msg, _send_discord, _send_notification, warning_notify, error_notify):
+def _notify(msg, _send_discord, _send_notification, warning_notify: bool = False, error_notify: bool = False):
 
-    message = _info_notify(msg=msg)
+    if error_notify:
+        message = _error_notify(msg)
+
+    elif warning_notify:
+        message = _warning_notify(msg)
+
+    else:
+        message = _info_notify(msg=msg)
+
     send_terminal(message)
 
     if _send_discord:

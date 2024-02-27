@@ -7,4 +7,3 @@ def investigate(element, old_element):
 
     else:
         return False
-

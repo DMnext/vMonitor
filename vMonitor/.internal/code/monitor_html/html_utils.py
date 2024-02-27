@@ -116,8 +116,7 @@ def get_html_parametrs(html_content):
         # print("SRC:", src)
         # print("Title:", title)
 
-    assert scr is not None
+    assert src is not None
     assert title is not None
 
     return src, title
-

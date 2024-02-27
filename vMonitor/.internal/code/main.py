@@ -1,6 +1,5 @@
 import time
 
-# from settings import conf
 from reader import read_yaml_config_value
 
 from stop_all_proseses import *
@@ -40,15 +39,6 @@ def html_monitor(old_elements):
         return link, msg, new_changes, changed
 
 
-def fast_notify(save_log_cache, send_log_terminal, send_log_email, pretty_print, email, html):
-    _b(save_log_cache=save_log_cache,
-       html=html,
-       send_log_terminal=send_log_terminal,
-       send_log_email=send_log_email,
-       pretty_print=pretty_print,
-       email=email)
-
-
 def main():
     global url
     # Example usage
@@ -59,59 +49,43 @@ def main():
     _send_discord = read_yaml_config_value(config_file_path, 'send_discord')
     _send_email = read_yaml_config_value(config_file_path, 'send_email')
     _send_notification = read_yaml_config_value(config_file_path, 'send_notification')
-    pretty_print = read_yaml_config_value(config_file_path, 'pretty')
-    email = read_yaml_config_value(config_file_path, 'save_log_cache')
-    send_log_terminal = read_yaml_config_value(config_file_path, 'send_log_terminal')
-    send_log_email = read_yaml_config_value(config_file_path, 'send_log_terminal')
-    err = read_yaml_config_value(config_file_path, 'email')
-    save_log_cache = read_yaml_config_value(config_file_path, 'save_log_cache')
 
     # conf(err=err)
 
     time_in_secs = _time * 60
 
-    if pretty_print and send_terminal:
-        pass
-        # install_traceback()
-
-    # if send_terminal and pretty_print:
-    #     from terminal import console
-    #     console()
-    #     _console = pretty_spinner()
-
     # URL of the webpage from which to fetch the HTML
 
     html = find_html(url)
     html_elements = parse_html(html)
-    html_number = len(html_elements)
-
-
-    html_elements = []
-    html_number = 0
-
-    html, html_elements, html_number = communicate_with_internet(url=url,
-                                                                 html_elements=html_elements,
-                                                                 html_number=html_number,
-                                                                 )
 
     message = "Started vMonitor!"
 
-    _notify(message, send_terminal, _send_discord, _send_email, _send_notification, email)
+    _notify(message, send_terminal, _send_discord, _send_email, _send_notification)
 
     while True:
         try:
-            html, html_elements, html_number = communicate_with_internet(url=url,
-                                                                         html_elements=html_elements,
-                                                                         html_number=html_number)
 
-            if get_communication_with_internet_result():
-                _notify("", send_terminal, _send_discord, _send_email, _send_notification, email)
+            link, msg, new_changes, changed = html_monitor(old_elements=html_elements)
 
-            fast_notify(save_log_cache, send_log_terminal, send_log_email, pretty_print, email, html)
+            html = find_html(url)
+            html_elements = parse_html(html)
+
+            if changed:
+                change_text = f"""Verschenktmarkt has changed {new_changes} times!
+Changes:
+    product_text: "{msg}"
+    product_photo_link: "{link}"
+    product_link: "error"
+                """
+                _notify(change_text,
+                        _send_discord,
+                        _send_notification)
 
         except Exception:
 
-            stop("Error in vMonitor", 1)
+            _notify("Error in vMonitor!", _send_discord, _send_notification,  error_notify=True)
+            stop(1)
 
         time.sleep(time_in_secs)
 

@@ -9,7 +9,4 @@ def send_notification(message):
     # Example usage
     send_notification("vMonitor", f"{message}")
 
-
-if __name__ == '__main__':
-    from main import main
-    main()  # .
+# .
