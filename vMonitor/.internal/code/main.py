@@ -6,6 +6,8 @@ from stop_all_proseses import *
 
 from comparer import compare
 
+from error import error
+
 from _notify import _notify
 from _monitor_html import *
 from _os import load_config
@@ -37,10 +39,15 @@ def html_monitor(old_elements):
     if msg is not None and link is not None:
 
         return link, msg, new_changes, changed
+    
+    else:
+        
+        return None, None, 0, False
 
 
 def main():
     global url
+    
     # Example usage
     config_file_path = load_config()
 
@@ -54,6 +61,9 @@ def main():
 
     time_in_secs = _time * 60
 
+    nothing_changed = 0
+    somthing_changed = 0
+
     # URL of the webpage from which to fetch the HTML
 
     html = find_html(url)
@@ -61,7 +71,8 @@ def main():
 
     message = "Started vMonitor!"
 
-    _notify(message, send_terminal, _send_discord, _send_email, _send_notification)
+    _notify(message, _send_discord, _send_notification)
+
 
     while True:
         try:
@@ -77,14 +88,31 @@ Changes:
     product_text: "{msg}"
     product_photo_link: "{link}"
     product_link: "error"
-                """
+"""
                 _notify(change_text,
                         _send_discord,
                         _send_notification)
+                
+                somthing_changed += 1
 
-        except Exception:
+            else:
+                _notify("Nothing changed on Verschenktmarkt...",
+                        _send_discord,
+                        _send_notification=False,
+                        only_log_discord=True)
+                
+                nothing_changed += 1
+
+        except Exception as err:
 
             _notify("Error in vMonitor!", _send_discord, _send_notification,  error_notify=True)
+            
+            error(err)
+            
+            # print(f"--> error")
+            
+            _notify(err, _send_discord, _send_notification=False,  error_notify=True)
+            
             stop(1)
 
         time.sleep(time_in_secs)
