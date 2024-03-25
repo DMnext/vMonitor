@@ -8,6 +8,7 @@ _file = os.path.dirname(vmonitor_file)
 config_path = f"{vmonitor_file}/.config/config.yaml"
 config_dir = f"{vmonitor_file}/.config/"
 cache_dir = f"{vmonitor_file}/.cache/"
+version_path = f"{vmonitor_file}/version"
 logo_path = f"{internal_file}/logo/logo.png"
 logo_dir = os.path.dirname(logo_path)
 license_path = f"{_file}/LICENSE"
@@ -16,6 +17,7 @@ license_dir = f"{_file}"
 code_file_name = os.path.basename(code_file)
 internal_file_name = os.path.basename(internal_file)
 vmonitor_file_name = os.path.basename(vmonitor_file)
+version_name = os.path.basename(version_path)
 
 license_file_name = os.path.basename(license_path)
 config_dir_name = os.path.basename(config_dir)
@@ -70,26 +72,15 @@ err: false  # err
 
 
 def test() -> tuple[bool, str]:
-    global _file
-    global code_file_name
-    global vmonitor_file
-    global vmonitor_file_name
-    global vmonitor_file_contents
-    global license_dir_contents
-    global license_contents
-    global license_dir
-    global license_path
-    global internal_file
-    global config_path
-    global config_dir
-    global cache_dir
-    global config_contents
 
     if not ".config" in vmonitor_file_contents:
         # print(vmonitor_file_contents)
         os.mkdir(f"{vmonitor_file}/.config")
         fh = open(f"{vmonitor_file}/.config/config.yaml", "w+")
         fh.write(config_contents)
+    
+    if not "version" in vmonitor_file_contents:
+        return False, "No 'version' file found."
 
     if not "LICENSE" in license_dir_contents:
         # print(license_dir_contents)
@@ -120,16 +111,31 @@ def test() -> tuple[bool, str]:
 
     elif logo_name != "logo.png":
         return False, f"No 'logo.png' file in '{internal_file}/logo/'."
-
-    else:
-        return True, "Test successive!"
+        
+    elif version_name != "version":
+        return False, f"No 'version' file in '{internal_file}'."
+        
+    with open(version_path, 'r') as file:
+       # Read the entire contents of the file
+       file_contents = file.read()
+       # print(file_contents)
+   
+    if file_contents != "1.0.1":
+        return False, "Wrong version contents."
+    
+    return True, "Test successive!"
 
 
 def load_config():
-    global config_path
     return config_path
 
 
 def get_logo_path():
-    global logo_path
     return logo_path
+    
+def get_version_contents():
+    with open(version_path, 'r') as file:
+       # Read the entire contents of the file
+       file_contents = file.read()
+       # print(file_contents)
+    return file_contents

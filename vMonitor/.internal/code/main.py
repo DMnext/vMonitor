@@ -11,7 +11,7 @@ from error import VMError, error
 from _notify import _notify
 from _os import load_config
 
-from _os import test
+from _os import test, get_version_contents
 
 url = "https://www.verschenkmarkt-stuttgart.de/"
 
@@ -89,6 +89,8 @@ def main():
     message = "Started vMonitor!"
 
     _notify(message, _send_discord, _send_notification)
+    
+    print(f"[INFO {t.strftime('%y.%m.%d_%H:%M:%S')}] Running on version {get_version_contents()}!")
 
     while True:
         try:
