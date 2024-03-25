@@ -49,7 +49,6 @@ def html_monitor(old_elements):
 
 
 def main():
-    global url
 
     print(f"[INFO {t.strftime('%y.%m.%d_%H:%M:%S')}] Testing...", end="\n")
 
@@ -77,6 +76,8 @@ def main():
     time_in_secs = _time * 60
 
     g = 0
+    
+    time_slept = 0
 
     nothing_changed = 0
     somthing_changed = 0
@@ -128,7 +129,7 @@ Changes:
 
             if g > 9:
                 g = 0
-                print_log(f"Number of changes = '{somthing_changed}', Number of no changes = '{nothing_changed}'")
+                print_log(f"Number of changes = '{somthing_changed}', Number of no changes = '{nothing_changed}', time slept = {time_slept * 1000} mily secs.")
 
         except Exception as err:
 
@@ -143,6 +144,8 @@ Changes:
             raise VMError("vMonitor crashed!")
 
         t.sleep(time_in_secs)
+        
+        time_slept += time_in_secs
 
 
 if __name__ == "__main__":
