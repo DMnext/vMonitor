@@ -116,7 +116,44 @@ def get_html_parametrs(html_content):
         # print("SRC:", src)
         # print("Title:", title)
 
-    assert src is not None
-    assert title is not None
+    assert src is not None, "'src' not found!"
+    assert title is not None, "'title' not found!"
 
     return src, title
+
+
+def extract_link(html_content):
+    # Assuming 'html_content' contains your HTML content
+    # html_content = """
+    # <html>
+    # <head>
+    #     <title>Example</title>
+    # </head>
+    # <body>
+    #     <div class="container">
+    #         <a class="link" href="https://example.com">Example Link</a>
+    #     </div>
+    # </body>
+    # </html>
+    # """
+
+    text = None
+    href = None
+
+    # Parse the HTML content
+    soup = BeautifulSoup(html_content, 'html.parser')
+
+    # Find all <a> tags with class "link"
+    links = soup.find_all('a', class_='link')
+
+    # Extract link URLs and text
+    for link in links:
+        href = link['href']
+        text = link.get_text()
+        # print("Link URL:", link['href'])
+        # print("Link Text:", link.get_text())
+
+    assert text is not None, "No 'text' found."
+    assert href is not None, "No 'href' found."
+
+    return href, text

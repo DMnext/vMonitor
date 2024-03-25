@@ -1,11 +1,8 @@
 import discord
 import time
-import sys
 from queue import Queue
 # from discord.ext import commands
-
-from stop_all_proseses import stop as end_proses
-import asyncio
+# import asyncio
 
 # Your Discord bot token (replace 'YOUR_TOKEN' with your actual token)
 TOKEN = 'MTIwOTg0MjYyMjg4NjE4NzA0OA.GcIR4r._cKb7ZsK5ijN-R_qVed0MaWnUZBL6DPIjMfshg'
@@ -40,16 +37,14 @@ client = discord.Client(intents=intents)
 
 @client.event
 async def on_ready():
-    print(f"[INFO] [DISCORD] Logged in as '{client.user.name}'")
-    print(f"[INFO] [DISCORD] Bot ID: '{client.user.id}'")
+    print(f"[INFO {time.strftime('%y.%m.%d_%H:%M:%S')}] [DISCORD] Logged in as '{client.user.name}'")
+    print(f"[INFO {time.strftime('%y.%m.%d_%H:%M:%S')}] [DISCORD] Bot ID: '{client.user.id}'")
 
     # Find the channel by ID
     channel = client.get_channel(CHANNEL_ID)
     # Send the message
     await channel.send(message_content)
-    print(f"[INFO] [DISCORD] Message sent: '{message_content}'")
-
-
+    print(f"[INFO {time.strftime('%y.%m.%d_%H:%M:%S')}] [DISCORD] Message sent: '{message_content}'")
 
 
 def run():
@@ -64,24 +59,27 @@ def send(tasks: Queue, /):
     global CHANNEL_ID
 
     while True:
-        taskmsg, taskmmsg, taskolog = tasks.get()
-        
-        message_content = taskmsg
+        task_msg, task_main_msg, task_only_log = tasks.get()
 
-        if taskolog:
+        if task_msg and task_main_msg and task_only_log is None:
+            exit(0)
+        
+        message_content = task_msg
+
+        if task_only_log:
             CHANNEL_ID = _CHANNEL_ID
             
-            client.run(TOKEN) # running bot
+            client.run(TOKEN)  # running bot
 
         else:
-            message_content = taskmmsg
+            message_content = task_main_msg
             
-            client.run(TOKEN) # running bot
+            client.run(TOKEN)  # running bot
             
-            message_content = taskmsg
+            message_content = task_msg
             CHANNEL_ID = _CHANNEL_ID
             
-            client.run(TOKEN) # running bot
+            client.run(TOKEN)  # running bot
             
         CHANNEL_ID = 1209851503616073749
         _CHANNEL_ID = 1212024170016415744

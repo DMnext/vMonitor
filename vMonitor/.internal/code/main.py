@@ -1,18 +1,23 @@
-import time
+import time as t
 
 from reader import read_yaml_config_value
 
-from stop_all_proseses import *
+from monitor_html.html_utils import *
+from monitor_html.investigate import *
+from monitor_html.html import parse_element
 
-from comparer import compare
-
-from error import error
+from error import VMError, error
 
 from _notify import _notify
-from _monitor_html import *
 from _os import load_config
 
+from _os import test
+
 url = "https://www.verschenkmarkt-stuttgart.de/"
+
+
+def print_log(msg):
+    print(f"[INFO {t.strftime('%y.%m.%d_%H:%M:%S')}] [LOG] {msg}")
 
 
 def html_monitor(old_elements):
@@ -24,42 +29,54 @@ def html_monitor(old_elements):
     msg = None
     link = None
 
+    link_to_site = None
+    msg2 = None
+
     elements = parse_html(find_html(url=url))
 
     for u, r in zip(elements, old_elements):
-        if compare((u, r)):
+        if u == r:
             pass
 
         else:
-            if not investigate(element=u, old_element=r):
+            if investigate(element=u, old_element=r):
                 new_changes += 1
+                link_to_site, msg2 = extract_link(u)
                 link, msg = parse_element(u)
                 changed = True
 
-    if msg is not None and link is not None:
-
-        return link, msg, new_changes, changed
-    
-    else:
-        
-        return None, None, 0, False
+    return link, link_to_site, msg, msg2, new_changes, changed
 
 
 def main():
     global url
-    
+
+    print(f"[INFO {t.strftime('%y.%m.%d_%H:%M:%S')}] Testing...", end="\n")
+
+    err, msg = test()
+    if not err:
+        print(f"[ERROR {t.strftime('%y.%m.%d_%H:%M:%S')}] {msg}")
+        raise VMError(msg)
+
+    print(f"[INFO {t.strftime('%y.%m.%d_%H:%M:%S')}] {msg}")
+
+    print_log("Loading config...")
+
     # Example usage
     config_file_path = load_config()
 
     _time = read_yaml_config_value(config_file_path, 'time')
-    send_terminal = read_yaml_config_value(config_file_path, 'send_terminal')
     _send_discord = read_yaml_config_value(config_file_path, 'send_discord')
     _send_email = read_yaml_config_value(config_file_path, 'send_email')
     _send_notification = read_yaml_config_value(config_file_path, 'send_notification')
 
     # conf(err=err)
 
+    print_log("Calculating for startup...")
+
     time_in_secs = _time * 60
+
+    g = 0
 
     nothing_changed = 0
     somthing_changed = 0
@@ -73,21 +90,23 @@ def main():
 
     _notify(message, _send_discord, _send_notification)
 
-
     while True:
         try:
 
-            link, msg, new_changes, changed = html_monitor(old_elements=html_elements)
+            print_log("Looking for changes in Verschenktmarkt...")
+
+            link, link_to_site, msg, msg2, new_changes, changed = html_monitor(old_elements=html_elements)
 
             html = find_html(url)
             html_elements = parse_html(html)
 
             if changed:
-                change_text = f"""Verschenktmarkt has changed {new_changes} times!
+                change_text = f"""Verschenktmarkt has changed {new_changes} time(s)!
 Changes:
-    product_text: "{msg}"
+    product_text1: "{msg}"
+    product_text2: "{msg2}"
     product_photo_link: "{link}"
-    product_link: "error"
+    product_link: "{link_to_site}"
 """
                 _notify(change_text,
                         _send_discord,
@@ -103,6 +122,12 @@ Changes:
                 
                 nothing_changed += 1
 
+            g += 1
+
+            if g > 9:
+                g = 0
+                print_log(f"Number of changes = '{somthing_changed}', Number of no changes = '{nothing_changed}'")
+
         except Exception as err:
 
             _notify("Error in vMonitor!", _send_discord, _send_notification,  error_notify=True)
@@ -112,10 +137,10 @@ Changes:
             # print(f"--> error")
             
             _notify(err, _send_discord, _send_notification=False,  error_notify=True)
-            
-            stop(1)
 
-        time.sleep(time_in_secs)
+            raise VMError("vMonitor crashed!")
+
+        t.sleep(time_in_secs)
 
 
 if __name__ == "__main__":

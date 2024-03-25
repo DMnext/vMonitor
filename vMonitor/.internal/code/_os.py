@@ -8,14 +8,128 @@ _file = os.path.dirname(vmonitor_file)
 config_path = f"{vmonitor_file}/.config/config.yaml"
 config_dir = f"{vmonitor_file}/.config/"
 cache_dir = f"{vmonitor_file}/.cache/"
-license_path = f"{_file}/LISENSE"
+logo_path = f"{internal_file}/logo/logo.png"
+logo_dir = os.path.dirname(logo_path)
+license_path = f"{_file}/LICENSE"
 license_dir = f"{_file}"
 
+code_file_name = os.path.basename(code_file)
+internal_file_name = os.path.basename(internal_file)
+vmonitor_file_name = os.path.basename(vmonitor_file)
 
-def check():
-    pass
+license_file_name = os.path.basename(license_path)
+config_dir_name = os.path.basename(config_dir)
+config_file_name = os.path.basename(config_path)
+logo_dir_name = os.path.basename(logo_dir)
+logo_name = os.path.basename(logo_path)
+
+
+def scan_dir(path):
+    dir = [os.path.basename(dir.path) for dir in os.scandir(path)]
+    return dir
+
+
+vmonitor_file_contents = scan_dir(vmonitor_file)
+license_dir_contents = scan_dir(license_dir)
+config_dir_contents = scan_dir(config_dir)
+
+license_contents = """MIT License
+
+Copyright (c) 2024 Daniel Mayorov
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+
+config_contents = """time: 5  # Time
+email: "example@email.com"  # Your email
+
+save_cache: false  # Save cache on your device
+send_discord: true  # Send to Discord, Email or Notification
+send_email: false  # Send to Discord, Email or Notification
+send_notification: true  # Send to Discord, Email or Notification
+
+pretty: true  # Make Terminal pretty
+err: false  # err
+"""
+
+
+def test() -> tuple[bool, str]:
+    global _file
+    global code_file_name
+    global vmonitor_file
+    global vmonitor_file_name
+    global vmonitor_file_contents
+    global license_dir_contents
+    global license_contents
+    global license_dir
+    global license_path
+    global internal_file
+    global config_path
+    global config_dir
+    global cache_dir
+    global config_contents
+
+    if not ".config" in vmonitor_file_contents:
+        # print(vmonitor_file_contents)
+        os.mkdir(f"{vmonitor_file}/.config")
+        fh = open(f"{vmonitor_file}/.config/config.yaml", "w+")
+        fh.write(config_contents)
+
+    if not "LICENSE" in license_dir_contents:
+        # print(license_dir_contents)
+        return False, "No 'LICENSE' file found."
+
+    # Open the file in read mode
+    with open(license_path, 'r') as file:
+        # Read the entire contents of the file
+        file_contents = file.read()
+        # print(file_contents)
+
+    if file_contents != license_contents:
+        return False, "Wrong license contents."
+
+    elif vmonitor_file_name != "vMonitor":
+        # print(vmonitor_file_name)
+        return False, f"No 'vMonitor' file in '{_file}'."
+
+    elif internal_file_name != ".internal":
+        return False, f"No '.internal' file in '{vmonitor_file}'."
+
+    elif code_file_name != "code":
+        return False, f"No 'code' file in '{internal_file}'."
+
+    elif logo_dir_name != "logo":
+        print(logo_dir_name)
+        return False, f"No 'logo' file in '{internal_file}'."
+
+    elif logo_name != "logo.png":
+        return False, f"No 'logo.png' file in '{internal_file}/logo/'."
+
+    else:
+        return True, "Test successive!"
 
 
 def load_config():
     global config_path
     return config_path
+
+
+def get_logo_path():
+    global logo_path
+    return logo_path

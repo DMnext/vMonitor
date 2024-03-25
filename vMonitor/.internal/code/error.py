@@ -1,4 +1,53 @@
-import traceback, sys
+import traceback
+from abc import ABC
+from typing import List
+
+
+class VMError(Exception, ABC):
+    """
+    Base class for all vmonitor-related errors.
+    """
+
+    def __init__(self, problem_text: str, /, *,
+                 is_regular: bool = False):
+        super().__init__()
+
+        self.code = 1
+        self.problem_text = problem_text
+
+        # regular errors are those that can happen if the tool is configured correctly, but has been provided invalid input
+        # here, 'input' should be narrowly understood as end user input, not as the tool users' input
+        # an example of such an input would be the image provided as a basis for the analysis
+        # on the other hand, the template configuration file does not count as end user input
+        self.is_regular = is_regular
+
+        self._causes: List[VMError] = []
+        self._external_causes: List[BaseException] = []
+
+    def add_cause(self, cause, /):
+        assert isinstance(cause, VMError)
+        self._causes.append(cause)
+
+    def get_causes(self):
+        return self._causes
+
+    def add_external_cause(self, cause: BaseException, /):
+        self._external_causes.append(cause)
+
+    def get_external_causes(self) -> List[BaseException]:
+        return self._external_causes
+
+    def get_details(self) -> str | None:
+        return None
+
+    def serialize(self):
+
+        causes = [
+            cause.serialize()
+            for cause in self._causes
+        ]
+
+        return self.problem_text
 
 
 def error(exc):

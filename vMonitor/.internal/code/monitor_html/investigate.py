@@ -6,4 +6,4 @@ def investigate(element, old_element):
         return False
 
     else:
-        return False
+        return True
