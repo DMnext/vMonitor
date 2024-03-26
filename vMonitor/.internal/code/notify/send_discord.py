@@ -1,20 +1,24 @@
 import discord
 import time
 from queue import Queue
+from reader import read_yaml_config_value
+from error import VMError
+from _os import load_config
+
 # from discord.ext import commands
 # import asyncio
 
 # Your Discord bot token (replace 'YOUR_TOKEN' with your actual token)
-TOKEN = 'MTIwOTg0MjYyMjg4NjE4NzA0OA.GcIR4r._cKb7ZsK5ijN-R_qVed0MaWnUZBL6DPIjMfshg'
+config_file_path = load_config()
+TOKEN = read_yaml_config_value(config_file_path, 'discord_token')
 
-message_content = "vmonitor.error : NoMessageGivenError"
+message_content = f"error : {VMError('No message given')}"
 
 # Channel ID where you want to send the message
 CHANNEL_ID = 1209851503616073749
 _CHANNEL_ID = 1212024170016415744
 
 # https://discord.gg/PTGXN7Cscy
-# https://poop.big-poop.de/pooping.html
 
 # Define intents
 intents = discord.Intents.default()

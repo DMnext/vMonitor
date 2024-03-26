@@ -58,16 +58,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-config_contents = """time: 5  # Time
-email: "example@email.com"  # Your email
+config_contents = """time: 5  # Time.
+email: "example@email.com"  # Your email.
 
-save_cache: false  # Save cache on your device
-send_discord: true  # Send to Discord, Email or Notification
-send_email: false  # Send to Discord, Email or Notification
-send_notification: true  # Send to Discord, Email or Notification
+send_discord: true  # Send to Discord, Email, Terminal or Notification.
+send_email: false  # Send to Discord, Email, Terminal or Notification.
+send_notification: true  # Send to Discord, Email, Terminal or Notification.
 
-pretty: true  # Make Terminal pretty
-err: false  # err
+discord_token: "TOKEN"  # Discord token.
+err: false  # Error.
+
 """
 
 
@@ -120,7 +120,7 @@ def test() -> tuple[bool, str]:
        file_contents = file.read()
        # print(file_contents)
    
-    if file_contents != "1.0.1":
+    if file_contents != "1.0.2":
         return False, "Wrong version contents."
     
     return True, "Test successive!"

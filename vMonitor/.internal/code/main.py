@@ -9,6 +9,8 @@ from monitor_html.html import parse_element
 
 from error import VMError, error
 
+import random
+
 from _notify import _notify
 from _os import load_config
 
@@ -18,6 +20,15 @@ url = "https://www.verschenkmarkt-stuttgart.de/"
 
 timer = Timer()
 
+mesages_for_reminding = ["Join our discord: 'https://discord.gg/PTGXN7Cscy/'.",
+                        f"Version: {get_version_contents()}.",
+                        "Did you see the api? Go to the 'api' file.",
+                        "Configure vMonitor in the 'vMonitor/.config/config.yaml' file.",
+                        "MIT-license see 'LISENSE' file.",
+                        "Not familiar with Verschenktmarkt? See 'https://www.verschenkmarkt-stuttgart.de/'.",
+                        "New to vMonitor? Read README.md.",
+                        "Don't forget to replace 'TOKEN' in the 'vMonitor/.config/config.yaml' file (Or you will get an error!)."
+                        "Nothing interesting to show."]
 
 def print_log(msg):
     print(f"[INFO {t.strftime('%y.%m.%d_%H:%M:%S')}] [LOG] {msg}")
@@ -75,7 +86,7 @@ def main():
 
         _time = read_yaml_config_value(config_file_path, 'time')
         _send_discord = read_yaml_config_value(config_file_path, 'send_discord')
-        _send_email = read_yaml_config_value(config_file_path, 'send_email')
+        _send_email = False
         _send_notification = read_yaml_config_value(config_file_path, 'send_notification')
 
     # conf(err=err)
@@ -150,10 +161,17 @@ Changes:
                 
                 nothing_changed += 1
 
+
+            t_t = (10 - _time) + random.randint(1, 3)
+            if t_t < 3:
+                t_t = 3
+            
             g += 1
-            if g > 9:
+            if g > t_t:
                 g = 0
-                print_log(f"Number of changes = '{somthing_changed}', Number of no changes = '{nothing_changed}', time slept = {time_slept * 1000} mili seconds.")
+                print_log(f"Number of changes = '{somthing_changed}', Number of no changes = '{nothing_changed}', time slept = {time_slept * 1000} mily seconds.")
+                print_log(f"[REMINDER] {mesages_for_reminding[random.randint(0, len(mesages_for_reminding) - 1)]}")
+
 
         except Exception as err:
 
@@ -166,6 +184,8 @@ Changes:
             _notify(err, _send_discord, _send_notification=False,  error_notify=True)
 
             raise VMError("vMonitor crashed!")
+            
+        print_log("Sleeping...")
 
         t.sleep(time_in_secs)
         
