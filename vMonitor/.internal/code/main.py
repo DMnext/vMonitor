@@ -153,7 +153,7 @@ Changes:
             g += 1
             if g > 9:
                 g = 0
-                print_log(f"Number of changes = '{somthing_changed}', Number of no changes = '{nothing_changed}', time slept = {time_slept * 1000} mily secs.")
+                print_log(f"Number of changes = '{somthing_changed}', Number of no changes = '{nothing_changed}', time slept = {time_slept * 1000} mili seconds.")
 
         except Exception as err:
 
