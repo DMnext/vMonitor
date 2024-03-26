@@ -1,26 +1,25 @@
 import time
+from typing import Tuple
 
 
-class timer:
-    
-    def start_timer(self):
-        # %y.%m.%d_%H:%M:
-        self.start_time_sec = time.strftime('%S')
-        self.start_time_min = time.strftime('%M')
-        self.start_time_hour = time.strftime('%H')
-        self.start_time_day = time.strftime('%d')
-        self.start_time_month = time.strftime('%m')
-        self.start_time_year = time.strftime('%y')
+class Timer:
 
-    def end_timer(self):
-        # %y.%m.%d_%H:%M:
-        self.end_time_sec = time.strftime('%S')
-        self.end_time_min = time.strftime('%M')
-        self.end_time_hour = time.strftime('%H')
-        self.end_time_day = time.strftime('%d')
-        self.end_time_month = time.strftime('%m')
-        self.end_time_year = time.strftime('%y')
+    def __init__(self):
+        self._start_time: Tuple[float, float] | None = None
+        self._end_time: Tuple[float, float] | None = None
 
-    def get_time(self):
-        self.start_time_sec - self.end_time_sec
+    def __enter__(self):
+        self._start_time = time.perf_counter(), time.process_time()
 
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self._end_time = time.perf_counter(), time.process_time()
+
+    def get_real_time(self) -> float:
+        assert self._start_time is not None
+        assert self._end_time is not None
+        return self._end_time[0] - self._start_time[0]
+
+    def get_cpu_time(self) -> float:
+        assert self._start_time is not None
+        assert self._end_time is not None
+        return self._end_time[1] - self._start_time[1]

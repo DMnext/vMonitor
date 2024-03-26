@@ -1,4 +1,5 @@
 import time as t
+from timer import Timer
 
 from reader import read_yaml_config_value
 
@@ -14,6 +15,8 @@ from _os import load_config
 from _os import test, get_version_contents
 
 url = "https://www.verschenkmarkt-stuttgart.de/"
+
+timer = Timer()
 
 
 def print_log(msg):
@@ -52,40 +55,55 @@ def main():
 
     print(f"[INFO {t.strftime('%y.%m.%d_%H:%M:%S')}] Testing...", end="\n")
 
-    err, msg = test()
+    with timer:
+        err, msg = test()
+    print_log(f"Testing time: '{timer.get_real_time()*1000:.2f}' mili seconds.")
+    print_log(f"Testing time: '{timer.get_cpu_time()*1000:.2f}' CPU time.")
+    
     if not err:
         print(f"[ERROR {t.strftime('%y.%m.%d_%H:%M:%S')}] {msg}")
         raise VMError(msg)
-
-    print(f"[INFO {t.strftime('%y.%m.%d_%H:%M:%S')}] {msg}")
-
+    else:
+        print(f"[INFO {t.strftime('%y.%m.%d_%H:%M:%S')}] {msg}")
+    
     print_log("Loading config...")
 
-    # Example usage
-    config_file_path = load_config()
+    with timer:
 
-    _time = read_yaml_config_value(config_file_path, 'time')
-    _send_discord = read_yaml_config_value(config_file_path, 'send_discord')
-    _send_email = read_yaml_config_value(config_file_path, 'send_email')
-    _send_notification = read_yaml_config_value(config_file_path, 'send_notification')
+        # Example usage
+        config_file_path = load_config()
+
+        _time = read_yaml_config_value(config_file_path, 'time')
+        _send_discord = read_yaml_config_value(config_file_path, 'send_discord')
+        _send_email = read_yaml_config_value(config_file_path, 'send_email')
+        _send_notification = read_yaml_config_value(config_file_path, 'send_notification')
 
     # conf(err=err)
+    
+    print_log(f"Loading config time: '{timer.get_real_time()*1000:.2f}' mili seconds.")
+    print_log(f"Loading config time: '{timer.get_cpu_time()*1000:.2f}' CPU time.")
 
     print_log("Calculating for startup...")
 
-    time_in_secs = _time * 60
+    with timer:
 
-    g = 0
-    
-    time_slept = 0
+        time_in_secs = _time * 60
 
-    nothing_changed = 0
-    somthing_changed = 0
+        g = 0
+        
+        time_slept = 0
 
-    # URL of the webpage from which to fetch the HTML
+        nothing_changed = 0
+        somthing_changed = 0
 
-    html = find_html(url)
-    html_elements = parse_html(html)
+        # URL of the webpage from which to fetch the HTML
+
+        html = find_html(url)
+        html_elements = parse_html(html)
+        
+        
+    print_log(f"Calculating time: '{timer.get_real_time()*1000:.2f}' mili seconds.")
+    print_log(f"Calculating time: '{timer.get_cpu_time()*1000:.2f}' CPU time.")
 
     message = "Started vMonitor!"
 
@@ -98,19 +116,25 @@ def main():
 
             print_log("Looking for changes in Verschenktmarkt...")
 
-            link, link_to_site, msg, msg2, new_changes, changed = html_monitor(old_elements=html_elements)
+            with timer:
 
-            html = find_html(url)
-            html_elements = parse_html(html)
+                link, link_to_site, msg, msg2, new_changes, changed = html_monitor(old_elements=html_elements)
 
+                html = find_html(url)
+                html_elements = parse_html(html)
+                
+            print_log(f"Monitoring Verschenktmarkt time: '{timer.get_real_time()*1000:.2f}' mili seconds.")
+            print_log(f"Monitoring Verschenktmarkt time: '{timer.get_cpu_time()*1000:.2f}' CPU time.")
+            
             if changed:
+                
                 change_text = f"""Verschenktmarkt has changed {new_changes} time(s)!
 Changes:
     product_text1: "{msg}"
     product_text2: "{msg2}"
     product_photo_link: "{link}"
     product_link: "{link_to_site}"
-"""
+    """
                 _notify(change_text,
                         _send_discord,
                         _send_notification)
@@ -118,6 +142,7 @@ Changes:
                 somthing_changed += 1
 
             else:
+            
                 _notify("Nothing changed on Verschenktmarkt...",
                         _send_discord,
                         _send_notification=False,
@@ -126,7 +151,6 @@ Changes:
                 nothing_changed += 1
 
             g += 1
-
             if g > 9:
                 g = 0
                 print_log(f"Number of changes = '{somthing_changed}', Number of no changes = '{nothing_changed}', time slept = {time_slept * 1000} mily secs.")
