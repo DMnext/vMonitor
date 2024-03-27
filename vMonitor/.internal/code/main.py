@@ -26,7 +26,7 @@ mesages_for_reminding = ["Join our discord: 'https://discord.gg/PTGXN7Cscy/'.",
                         "Configure vMonitor in the 'vMonitor/.config/config.yaml' file.",
                         "MIT-license see 'LISENSE' file.",
                         "Not familiar with Verschenktmarkt? See 'https://www.verschenkmarkt-stuttgart.de/'.",
-                        "New to vMonitor? Read README.md.",
+                        "New to vMonitor? Read 'README.md' for more information.",
                         "Don't forget to replace 'TOKEN' in the 'vMonitor/.config/config.yaml' file (Or you will get an error!)."
                         "Nothing interesting to show."]
 
