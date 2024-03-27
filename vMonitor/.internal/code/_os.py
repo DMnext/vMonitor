@@ -124,7 +124,7 @@ def test() -> tuple[bool, str]:
        file_contents = file.read()
        # print(file_contents)
    
-    if file_contents != "1.0.2":
+    if file_contents != "1.0.3":
         return False, "Wrong version contents."
         
     get_system_info()
