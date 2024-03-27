@@ -1,4 +1,7 @@
 import os
+import time
+import random
+from system import get_system_info
 
 code_file = os.path.dirname(__file__)
 internal_file = os.path.dirname(code_file)
@@ -24,6 +27,8 @@ config_dir_name = os.path.basename(config_dir)
 config_file_name = os.path.basename(config_path)
 logo_dir_name = os.path.basename(logo_dir)
 logo_name = os.path.basename(logo_path)
+
+rid = random.random()
 
 
 def scan_dir(path):
@@ -61,9 +66,8 @@ SOFTWARE.
 config_contents = """time: 5  # Time.
 email: "example@email.com"  # Your email.
 
-send_discord: true  # Send to Discord, Email, Terminal or Notification.
-send_email: false  # Send to Discord, Email, Terminal or Notification.
-send_notification: true  # Send to Discord, Email, Terminal or Notification.
+send_discord: true  # Send to Discord or Notification.
+send_notification: true  # Send to Discord or Notification.
 
 discord_token: "TOKEN"  # Discord token.
 err: false  # Error.
@@ -122,6 +126,8 @@ def test() -> tuple[bool, str]:
    
     if file_contents != "1.0.2":
         return False, "Wrong version contents."
+        
+    get_system_info()
     
     return True, "Test successive!"
 
@@ -133,9 +139,22 @@ def load_config():
 def get_logo_path():
     return logo_path
     
+    
 def get_version_contents():
     with open(version_path, 'r') as file:
        # Read the entire contents of the file
        file_contents = file.read()
        # print(file_contents)
     return file_contents
+    
+    
+def get_log_file():
+    return f"{cache_dir}LOG_{time.strftime('%y.%m.%d')}-{rid}.txt"
+    
+    
+def get_rid():
+    return rid
+    
+
+def get_cache_dir():
+    return cache_dir

@@ -1,8 +1,11 @@
 from notify.message import send_discord, send_notification
+from saver import save_log_line
+from _os import get_log_file
 import time
 
 
 def send_terminal(message):
+    save_log_line(message, get_log_file())
     print(message)
 
 

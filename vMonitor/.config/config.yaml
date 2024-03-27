@@ -1,8 +1,8 @@
-time: 5  # Time
-email: "example@email.com"  # Your email
+time: 5  # Time.
+email: "example@email.com"  # Your email.
 
-send_discord: true  # Send to Discord, Email, Terminal or Notification
-send_notification: true  # Send to Discord, Email, Terminal or Notification
+send_discord: true  # Send to Discord or Notification.
+send_notification: true  # Send to Discord or Notification.
 
 discord_token: "TOKEN"
-err: false  # err
+err: false  # Error.
